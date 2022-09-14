@@ -39,6 +39,9 @@ class ChangeDetectionHandler<T extends {}> {
         `${this.prependPath ? this.prependPath + '.' : ''}${instanceProperty as any}`
       );
     }
+    if (typeof instance[instanceProperty] === 'function') {
+      (instance[instanceProperty] as typeof Function) = (instance[instanceProperty] as typeof Function).bind(instance);
+    }
     return instance[instanceProperty];
   }
 
