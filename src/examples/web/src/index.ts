@@ -1,4 +1,4 @@
-import { WatchThis } from '../../../observed/handler';
+import { WatchThis } from './observed';
 import './index.html';
 
 const getObservedElement = <T extends HTMLElement>(elementOrSelector: T | null | string): T => {
