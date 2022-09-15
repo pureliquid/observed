@@ -71,7 +71,7 @@ export function Observed({ singleton = true }: ObservedOptions) {
         this.__onChanges = onChangeMeta.stack ? debounceOnChanges(onChangesRawFn, 1) : onChangesRawFn;
         this.__onRead = onReadMeta.stack ? debounceOnChanges<OnReadFn>(onReadRawFn, 1) : onReadRawFn;
 
-        const watched = WatchThis(this, this.__onChanges, this.__onRead);
+        const watched = WatchThis(this, [this.__onChanges], [this.__onRead]);
         Reflect.defineMetadata(WatcherMetadata.NAME, constructor.name, watched);
 
         if (singleton) {

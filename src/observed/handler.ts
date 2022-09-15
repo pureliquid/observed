@@ -2,16 +2,18 @@ import { HandlerKeywords, OnChangesFn, OnReadFn, toObject } from './types';
 
 class ChangeDetectionHandler<T extends {}> {
   latestInstance?: T;
-
+  __onChangeFunctionList: OnChangesFn[] = [];
+  __onReadFunctionList: OnReadFn[] = [];
   constructor(
-    private onChanges: OnChangesFn,
-    private onReadAccess: OnReadFn,
+    private onChanges: OnChangesFn[],
+    private onReadAccess: OnReadFn[],
     private isChildProxy?: boolean,
     private prependPath?: string
   ) {
+    this.__onChangeFunctionList = onChanges;
+    this.__onReadFunctionList = onReadAccess;
     return this;
   }
-
   buildPropertyChangePath(property: any) {
     return this.prependPath ? this.prependPath + '.' + property : property;
   }
@@ -25,16 +27,27 @@ class ChangeDetectionHandler<T extends {}> {
   }
 
   get(instance: T, instanceProperty: keyof T): any {
+    // @ts-ignore
+    instance['addOnChange'] = (fn: OnChangesFn): void => {
+      this.__onChangeFunctionList.push(fn);
+    };
+    // @ts-ignore
+    instance['addOnRead'] = (fn: OnReadFn): void => {
+      this.__onReadFunctionList.push(fn);
+    };
     if (this.isPreserved(instanceProperty)) {
       return instance[instanceProperty];
     }
     const propValue: ChangeDetectionHandler<any> = instance[instanceProperty] as any as ChangeDetectionHandler<any>;
-    this.onReadAccess([this.buildPropertyChangePath(instanceProperty)] as any as keyof T[]);
+    console.log(this.__onReadFunctionList);
+    this.__onReadFunctionList.forEach((fn) => {
+      fn([this.buildPropertyChangePath(instanceProperty)] as any as keyof T[]);
+    });
     if (typeof propValue === 'object' && !propValue.isChildProxy) {
       return WatchThis(
         instance[instanceProperty] as any,
-        this.onChanges.bind(instance),
-        this.onReadAccess.bind(instance),
+        this.__onChangeFunctionList,
+        this.__onReadFunctionList,
         true,
         `${this.prependPath ? this.prependPath + '.' : ''}${instanceProperty as any}`
       );
@@ -51,8 +64,8 @@ class ChangeDetectionHandler<T extends {}> {
     if (typeof value === 'object' && !(value as ChangeDetectionHandler<any>).isChildProxy) {
       instance[instanceProperty] = WatchThis(
         value,
-        this.onChanges.bind(instance),
-        this.onReadAccess.bind(instance),
+        this.__onChangeFunctionList,
+        this.__onReadFunctionList,
         true,
         `${this.prependPath ? this.prependPath + '.' : ''}${instanceProperty as any}`
       );
@@ -64,15 +77,18 @@ class ChangeDetectionHandler<T extends {}> {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     // this.latestInstance.__setLatestUpdates([this.buildNotificationPath(instanceProperty)] as any as keyof T[]);
-    this.onChanges([this.buildPropertyChangePath(instanceProperty)] as any as keyof T[]);
+    this.__onChangeFunctionList.forEach((fn) => {
+      fn([this.buildPropertyChangePath(instanceProperty)] as any as keyof T[]);
+    });
+
     return true;
   }
 }
 
 export function WatchThis<T extends object>(
   classToWatch: T,
-  onChanges: OnChangesFn,
-  onReadAccess: OnReadFn,
+  onChanges: OnChangesFn[],
+  onReadAccess: OnReadFn[],
   isChildProxy?: boolean,
   prependPath?: string
 ): T {
