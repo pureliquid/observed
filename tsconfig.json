@@ -101,9 +101,9 @@
     /* Completeness */
     // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
     "skipLibCheck": true /* Skip type checking all .d.ts files. */,
-    "types": ["reflect-metadata"]
+    "types": ["reflect-metadata", "./src/types/typings"]
   },
   "include": [
     "src/index.ts" // maybe weback
-  ]
+  ],
 }

@@ -8,7 +8,7 @@
     /* Modules */
     "module": "ES6"
     /* Specify what module code is generated. */,
-    "rootDir": "../../../src"
+    "rootDir": "./src"
     /* Specify the root folder within your source files. */,
     "esModuleInterop": true
     /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */,
@@ -19,8 +19,9 @@
     "skipLibCheck": true
     /* Skip type checking all .d.ts files. */,
     "types": [
-      "reflect-metadata"
-    ]
+      "reflect-metadata",
+      "./src/types/typings"
+    ],
   },
   "include": [
     "src/index.ts"

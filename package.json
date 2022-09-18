@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack",
-    "serve": "webpack serve --mode development --allowed-hosts all"
+    "serve": "webpack serve --mode development --allowed-hosts all",
+    "serve:example:web": "rm -rf src/examples/web/src/observed && cp -R src/observed src/examples/web/src && cd src/examples/web && npm run serve"
   },
   "devDependencies": {
     "@babel/core": "^7.19.0",

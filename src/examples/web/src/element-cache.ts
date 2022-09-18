@@ -1,9 +1,13 @@
-import { OnChangesFn, OnReadFn, Singleton, WatchThis } from './observed';
+import { OnChangesFn, OnReadFn, Singleton, WatchThis } from './observed/index';
+
 const getRandomId = () => Math.random() + '';
+
 @Singleton()
 export class ElementCache {
   cachedElementAttribute = 'c';
+
   constructor() {}
+
   elements: Record<string, HTMLElement> = {};
 
   handleCacheForElement<T extends HTMLElement>(
@@ -26,7 +30,7 @@ export class ElementCache {
       };
     }
     // @ts-ignore
-    console.log(this.elements[cacheAttribute], this.elements[cacheAttribute].addOnChange);
+    console.log('Element Exists');
 
     return {
       element: this.elements[cacheAttribute] as T & {
@@ -37,4 +41,5 @@ export class ElementCache {
     };
   }
 }
+
 export const elementCache = new ElementCache();
