@@ -1,6 +1,6 @@
 import { Observed, OnChange, OnRead } from './observed/decorator';
 // singleton instance means every constructor call (new ExampleClass ) returns the same instance. ( no static property or whatsoever
-@Observed({ singleton: true })
+@Observed<ExampleClass>({ singleton: true })
 class ExampleClass {
   public test: any = 'test1';
 

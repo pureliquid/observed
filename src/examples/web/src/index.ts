@@ -1,23 +1,24 @@
-import { WatchThis } from './observed';
-import './index.html';
-import './element-cache';
+import './query-selector.polyfill';
 import { elementCache } from './element-cache';
-import { getObservedElement } from './get-observed-element';
+// import './element-cache';
 // TODO: find way to reuse but dont reuse onChange!
 window.onload = () => {
-  const one = document.getElementById('one');
-  const cls = getObservedElement(
-    '#one',
-    function (changes: keyof HTMLElement[]) {
-      console.log('changes ', changes);
-    },
-    function (read: keyof HTMLElement[]) {
-      console.log('read ', read);
-    }
-  );
-  /*const cls2 = getObservedElement('#one');
+  const cls = document.querySelector('#one');
+  if (!cls) {
+    return;
+  }
+  cls.addOnChange(function (read: keyof HTMLElement[]) {
+    console.log('change 1337', read);
+  });
+
+  cls.addOnRead(function (read: keyof HTMLElement[]) {
+    console.log('read 1337', read);
+  });
   console.log(cls.id);
-  console.log('OK: ', cls.getAttribute('id'));
-  cls.setAttribute('test', '1337');*/
+  cls.innerHTML = 'qdw';
+  console.log(elementCache.elements);
+  /*console.log('OK: ', cls.getAttribute('id'));
+      cls.setAttribute('test', '1337');*/
   cls.setAttribute('test', '1337');
+  console.log(cls.id);
 };
